@@ -2,10 +2,9 @@ pipeline {
     agent any
 stages {
         stage('Build') {
-            steps {
-                echo 'Building...'
-                // Your build steps here
-            }
+            withAWS(credentials: 'aws-keys', region: 'us-east-1') {
+                sh'terraform init'
+        }
         }
         
         stage('Test') {
