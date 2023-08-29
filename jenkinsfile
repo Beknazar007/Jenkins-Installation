@@ -1,32 +1,35 @@
 pipeline {
     agent any
     
-
-    
     stages {
-        stage('Plan') {
+        stage('Init and Plan') {
             steps {
-                withCredentials([string(credentialsId: 'aws-credentials', variable: 'AWS_CREDENTIALS')]) {
-                    sh " terraform init -input=false"
-                    sh " terraform plan -input=false -out=tfplan"
-                    sh " terraform show -no-color tfplan > tfplan.txt"
+                script {
+                    withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
+                        sh "terraform init -input=false"
+                        sh "terraform plan -input=false -out=tfplan"
+                        sh "terraform show -no-color tfplan > tfplan.txt"
+                    }
                 }
             }
         }
-        
         stage('Apply') {
             steps {
-                withCredentials([string(credentialsId: 'aws-credentials', variable: 'AWS_CREDENTIALS')]) {
-                    sh " terraform apply -input=false tfplan"
+                script {
+                    
+                    withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
+                        sh "terraform apply -input=false tfplan"
+                    }
                 }
             }
         }
-        
         stage('Destroy') {
             steps {
                 input 'approve'
-                withCredentials([string(credentialsId: 'aws-credentials', variable: 'AWS_CREDENTIALS')]) {
-                    sh " terraform destroy --auto-approve"
+                script {
+                    withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
+                        sh "terraform destroy --auto-approve"
+                    }
                 }
             }
         }
