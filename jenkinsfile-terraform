@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+    
+    environment {
+        AWS_DEFAULT_REGION = 'us-east-1'  // Replace with your desired AWS region
+    }
+    
+    stages {
+        stage('Initialize') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+        
+        stage('Validate') {
+            steps {
+                sh 'terraform validate'
+            }
+        }
+        
+        stage('Plan') {
+            steps {
+                sh 'terraform plan -out=tfplan'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                sh 'terraform apply tfplan'
+            }
+        }
+    }
+    
+    post {
+        always {
+            sh 'terraform destroy -auto-approve' // Clean up resources after the pipeline
+        }
+    }
+}
