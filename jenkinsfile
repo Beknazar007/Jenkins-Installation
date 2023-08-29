@@ -1,24 +1,31 @@
 pipeline {
     agent any
-stages {
-        stage('Build') {
-            withAWS(credentials: 'aws-keys', region: 'us-east-1') {
-                sh'terraform init'
-        }
-        }
-        
-        stage('Test') {
+     environment {
+        AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+    }
+
+    stages {
+        stage('Plan') {   
             steps {
-                echo 'Testing...'
-                // Your test steps here
+                sh 'terraform init -input=false'
+                sh "terraform plan -input=false -out tfplan "
+                sh 'terraform show -no-color tfplan > tfplan.txt'
+            }
+        }
+        stage('Apply') {            
+            steps {
+                input 'approve'
+                sh "terraform apply -input=false tfplan"
             }
         }
         
-        stage('Deploy') {
-            steps {
-                echo 'Deploying...'
-                // Your deployment steps here
-            }
+        stage('Destroy') {
+        steps {
+        input 'approve'
+           sh "terraform destroy --auto-approve"
         }
     }
+
+  }
 }
