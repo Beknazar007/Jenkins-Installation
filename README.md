@@ -90,6 +90,9 @@ Jenkins is a self-contained Java-based program, ready to run out-of-the-box, wit
    sudo systemctl  start jenkins
    sudo systemctl  enable jenkins
    sudo yum install git -y
+   wget https://releases.hashicorp.com/terraform/1.5.6/terraform_1.5.6_linux_amd64.zip
+   unzip terraform_1.5.6_linux_amd64.zip
+   sudo mv terraform /usr/local/bin/
    ```
 
 #### Add java to jenkins

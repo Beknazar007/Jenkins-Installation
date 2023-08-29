@@ -8,11 +8,14 @@ pipeline {
     stages {
         stage('Initialize') {
             steps {
-                sh 'terraform init'
+                git branch: 'main', url: 'https://github.com/Beknazar007/Jenkins-Installation.git'
             }
         }
         
         stage('Plan') {
+            withCredentials([<object of type com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentialsBinding>]) {
+    sh 'terraform plan -out=tfplan'
+}
             steps {
                 sh 'terraform plan -out=tfplan'
             }
