@@ -1,30 +1,37 @@
 pipeline {
     agent any
-     environment {
-        AWS_ACCESS_KEY_ID     = credentials('access-key')
-        AWS_SECRET_ACCESS_KEY = credentials('secret-key')
-    }
-
+    
     stages {
-        stage('Plan') {   
+        stage('Init and Plan') {
             steps {
-                sh 'terraform init -input=false'
-                sh "terraform plan -input=false -out tfplan "
-                sh 'terraform show -no-color tfplan > tfplan.txt'
+                script {
+                    withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
+                        sh "terraform init -input=false"
+                        sh "terraform plan -input=false -out=tfplan"
+                        sh "terraform show -no-color tfplan > tfplan.txt"
+                    }
+                }
             }
         }
-        stage('Apply') {            
+        stage('Apply') {
             steps {
-                sh "terraform apply -input=false tfplan"
+                script {
+                    
+                    withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
+                        sh "terraform apply -input=false tfplan"
+                    }
+                }
             }
         }
-        
         stage('Destroy') {
-        steps {
-        input 'approve'
-           sh "terraform destroy --auto-approve"
+            steps {
+                input 'approve'
+                script {
+                    withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
+                        sh "terraform destroy --auto-approve"
+                    }
+                }
+            }
         }
     }
-
-  }
 }
