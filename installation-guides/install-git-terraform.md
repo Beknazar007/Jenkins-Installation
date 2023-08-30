@@ -9,3 +9,8 @@
     ```sh
     sudo yum install git -y
    ```
+
+   install java 
+       ```sh
+    sudo apt install openjdk-11-jre-headless 
+   ```

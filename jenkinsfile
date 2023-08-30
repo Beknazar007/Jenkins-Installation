@@ -5,7 +5,7 @@ pipeline {
         stage('Init and Plan') {
             steps {
                 script {
-                    withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
+                    withAWS(credentials: 'aws-for-demo-cred', region: 'us-east-1')  {
                         sh "terraform init -input=false"
                         sh "terraform plan -input=false -out=tfplan"
                         sh "terraform show -no-color tfplan > tfplan.txt"
@@ -13,21 +13,23 @@ pipeline {
                 }
             }
         }
+
         stage('Apply') {
             steps {
                 script {
-                    
-                    withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
+                    input 'approve'
+                    withAWS(credentials: 'aws-for-demo-cred', region: 'us-east-1')  {
                         sh "terraform apply -input=false tfplan"
                     }
                 }
             }
         }
+        
         stage('Destroy') {
             steps {
                 input 'approve'
                 script {
-                    withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
+                    withAWS(credentials: 'aws-for-demo-cred', region: 'us-east-1')  {
                         sh "terraform destroy --auto-approve"
                     }
                 }

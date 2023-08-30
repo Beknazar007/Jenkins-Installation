@@ -83,7 +83,6 @@ Jenkins is a self-contained Java-based program, ready to run out-of-the-box, wit
 ```sh
    sudo yum install java-11-amazon-corretto-devel -y
    sudo yum -y install wget
-   sudo yum install -y epel-release java-11-openjdk
    sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
    sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
    sudo yum -y install jenkins
