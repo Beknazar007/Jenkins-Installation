@@ -4,7 +4,9 @@ pipeline {
     agent any
     stages {
         stage("Library"){
-            alik()
+            steps{
+                alik()}
+            
         }
     }
 }
