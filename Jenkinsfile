@@ -5,7 +5,10 @@ pipeline {
     stages {
         stage("Library"){
             steps{
-                alik()}
+                script{
+                alik()
+                }
+                }
             
         }
     }
